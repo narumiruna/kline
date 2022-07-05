@@ -21,3 +21,7 @@ def create_exchange_from_env(exchange_name: str) -> ccxt.Exchange:
         'secret': os.environ.get(f'{exchange_name.upper()}_API_SECRET'),
     }
     return getattr(ccxt, exchange_name.lower())(config)
+
+
+def build_filename(exchange_name: str, symbol: str, timeframe: str) -> str:
+    return '{}_{}_{}.csv'.format(exchange_name.lower(), symbol.replace('/', '').lower(), timeframe.lower())

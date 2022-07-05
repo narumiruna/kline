@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List
 
 import ccxt
+import pandas as pd
 from loguru import logger
 
 from .utils import to_datetime
@@ -36,7 +37,7 @@ class OHLCV:
 def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since: int = 0) -> List[OHLCV]:
     logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, exchange.name, timeframe)
 
-    ohlcv_list = []
+    all_ohlcv = []
     while True:
         batch_ohlcv = [OHLCV(*kline) for kline in exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)]
         batch_ohlcv.sort(key=lambda k: k.timestamp)
@@ -44,7 +45,13 @@ def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since:
         if len(batch_ohlcv) == 0:
             break
 
-        ohlcv_list += batch_ohlcv
+        all_ohlcv += batch_ohlcv
         since = batch_ohlcv[-1].timestamp + 1
 
-    return ohlcv_list
+    return all_ohlcv
+
+
+def to_dataframe(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
+    df = pd.DataFrame([ohlcv.to_dict() for ohlcv in all_ohlcv])
+    df.set_index('timestamp', inplace=True)
+    return df

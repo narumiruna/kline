@@ -3,6 +3,7 @@ import pandas as pd
 from loguru import logger
 
 from .ohlcv import fetch_all_ohlcv
+from .utils import build_filename
 from .utils import create_exchange_from_env
 
 
@@ -21,7 +22,7 @@ def download(exchange_name: str, symbol: str, timeframe: str, filename: str) -> 
     all_ohlcv = fetch_all_ohlcv(exchange, symbol, timeframe)
 
     if filename is None:
-        filename = '{}_{}_{}.csv'.format(exchange_name.lower(), symbol.replace('/', '').lower(), timeframe)
+        filename = build_filename(exchange_name, symbol, timeframe)
 
     logger.info('saving all ohlcv to {}', filename)
     df = pd.DataFrame([ohlcv.to_dict() for ohlcv in all_ohlcv])
