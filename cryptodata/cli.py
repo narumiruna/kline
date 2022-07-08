@@ -19,11 +19,10 @@ def cli():
 @click.option('-f', '--filename', type=click.STRING, default=None)
 def download(exchange_name: str, symbol: str, timeframe: str, filename: str) -> None:
     exchange = create_exchange_from_env(exchange_name=exchange_name)
-    all_ohlcv = fetch_all_ohlcv(exchange, symbol, timeframe)
+    df = fetch_all_ohlcv(exchange, symbol, timeframe)
 
     if filename is None:
-        filename = build_filename(exchange_name, symbol, timeframe)
+        filename = build_filename(exchange.name, symbol, timeframe)
 
     logger.info('saving all ohlcv to {}', filename)
-    df = pd.DataFrame([ohlcv.to_dict() for ohlcv in all_ohlcv])
-    df.to_csv(filename, index=False)
+    df.to_csv(filename)

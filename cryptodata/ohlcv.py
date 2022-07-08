@@ -1,11 +1,8 @@
 from dataclasses import dataclass
-from typing import List
 
 import ccxt
 import pandas as pd
 from loguru import logger
-
-from .utils import to_datetime
 
 
 @dataclass
@@ -17,11 +14,8 @@ class OHLCV:
     close: float
     volume: float
 
-    def datetime(self):
-        return to_datetime(self.timestamp)
-
     def __str__(self):
-        return f'{self.datetime()} {self.open} {self.high} {self.low} {self.close} {self.volume}'
+        return f"OHLCV(timestamp={self.timestamp}, open={self.open}, high={self.high}, low={self.low}, close={self.close}, volume={self.volume})"
 
     def to_dict(self) -> dict:
         return dict(
@@ -34,7 +28,7 @@ class OHLCV:
         )
 
 
-def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since: int = 0) -> List[OHLCV]:
+def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since: int = 0) -> pd.DataFrame:
     logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, exchange.name, timeframe)
 
     all_ohlcv = []
@@ -48,10 +42,7 @@ def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since:
         all_ohlcv += batch_ohlcv
         since = batch_ohlcv[-1].timestamp + 1
 
-    return all_ohlcv
-
-
-def to_dataframe(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame([ohlcv.to_dict() for ohlcv in all_ohlcv])
     df.set_index('timestamp', inplace=True)
+
     return df

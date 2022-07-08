@@ -24,4 +24,4 @@ def create_exchange_from_env(exchange_name: str) -> ccxt.Exchange:
 
 
 def build_filename(exchange_name: str, symbol: str, timeframe: str) -> str:
-    return '{}_{}_{}.csv'.format(exchange_name.lower(), symbol.replace('/', '').lower(), timeframe.lower())
+    return '{}_{}_{}.csv'.format(exchange_name, symbol.replace('/', '').upper(), timeframe.lower())
