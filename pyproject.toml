@@ -18,7 +18,7 @@ isort = "^5.10.1"
 flake8 = "^4.0.1"
 
 [tool.poetry.scripts]
-cryptodata = "cryptodata.cli:cli"
+cryptodataset = "cryptodataset.cli:cli"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
