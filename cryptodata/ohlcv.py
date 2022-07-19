@@ -1,48 +1,36 @@
-from dataclasses import dataclass
-
 import ccxt
 import pandas as pd
 from loguru import logger
 
 
-@dataclass
-class OHLCV:
-    timestamp: int
-    open: float
-    high: float
-    low: float
-    close: float
-    volume: float
-
-    def __str__(self):
-        return f"OHLCV(timestamp={self.timestamp}, open={self.open}, high={self.high}, low={self.low}, close={self.close}, volume={self.volume})"
-
-    def to_dict(self) -> dict:
-        return dict(
-            timestamp=self.timestamp,
-            open=self.open,
-            high=self.high,
-            low=self.low,
-            close=self.close,
-            volume=self.volume,
-        )
+def to_milliseconds(timeframe: str) -> int:
+    return {'1m': 1000 * 60, '1h': 1000 * 60 * 60, '1d': 1000 * 60 * 60 * 24}[timeframe]
 
 
-def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, since: int = 0) -> pd.DataFrame:
+def fetch_all_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str) -> pd.DataFrame:
     logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, exchange.name, timeframe)
+
+    since = None
+    limit = None
 
     all_ohlcv = []
     while True:
-        batch_ohlcv = [OHLCV(*kline) for kline in exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)]
-        batch_ohlcv.sort(key=lambda k: k.timestamp)
+        ohlcv = exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)
+        ohlcv.sort(key=lambda k: k[0])
 
-        if len(batch_ohlcv) == 0:
+        if limit is None:
+            limit = len(ohlcv)
+
+        if all_ohlcv and ohlcv[0][0] == all_ohlcv[0][0]:
             break
 
-        all_ohlcv += batch_ohlcv
-        since = batch_ohlcv[-1].timestamp + 1
+        all_ohlcv = ohlcv + all_ohlcv
 
-    df = pd.DataFrame([ohlcv.to_dict() for ohlcv in all_ohlcv])
-    df.set_index('timestamp', inplace=True)
+        # a small amount of overlap to make sure the final data is continuous
+        since = ohlcv[0][0] - to_milliseconds(timeframe) * (limit - 1)
+
+    df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+    df = df.drop_duplicates('timestamp')
+    df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
 
     return df
