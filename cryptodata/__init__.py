@@ -1,1 +1,1 @@
-from .ohlcv import fetch_all_ohlcv
+from .ohlcv import OHLCVFetcher
