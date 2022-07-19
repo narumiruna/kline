@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import click
 from loguru import logger
 
@@ -20,7 +22,9 @@ def download(exchange_name: str, symbol: str, timeframe: str, filename: str) -> 
     df = OHLCVFetcher(exchange).fetch_all_ohlcv(symbol, timeframe)
 
     if filename is None:
-        f = '{}_{}_{}.csv'.format(exchange_name, symbol.replace('/', '').upper(), timeframe.lower())
+        filename = 'data/{}_{}_{}.csv'.format(exchange_name, symbol.replace('/', '').upper(), timeframe.lower())
+
+    Path(filename).parent.mkdir(parents=True, exist_ok=True)
 
     logger.info('saving all ohlcv to {}', filename)
     df.to_csv(filename, index=False)
