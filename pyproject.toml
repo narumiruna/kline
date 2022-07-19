@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cryptodata"
+name = "cryptodataset"
 version = "0.1.0"
 description = ""
 authors = ["なるみ"]
