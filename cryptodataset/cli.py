@@ -16,7 +16,7 @@ def download_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, output_
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    csv_path = output_dir / '{}_{}_{}.csv'.format(output_dir, exchange.name, symbol.replace('/', '').upper(), timeframe)
+    csv_path = output_dir / '{}_{}_{}.csv'.format(exchange.name, symbol.replace('/', '').upper(), timeframe)
 
     logger.info('saving ohlcv to {}', csv_path)
     df.to_csv(csv_path, index=False)

@@ -7,8 +7,10 @@ import pandas as pd
 import requests
 from loguru import logger
 
+from .fetcher import Fetcher
 
-class VolatilityFetcher(object):
+
+class VolatilityFetcher(Fetcher):
     base_url = 'https://www.deribit.com'
     timeframes = {
         '1s': '1',
@@ -41,7 +43,7 @@ class VolatilityFetcher(object):
 
     def fetch_all(self, currency: str, timeframe: str = '1m') -> pd.DataFrame:
         """Fetch all volatility index data from deribit
-        
+
         https://docs.deribit.com/#public-get_volatility_index_data
         """
 
