@@ -17,7 +17,7 @@ class CCXTData(Base):
     def get_market_symbols(self) -> List[str]:
         return [market['symbol'] for market in self.exchange.fetch_markets()]
 
-    def get_all_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    def get_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, self.exchange.name, timeframe)
 
         since = None
@@ -46,7 +46,7 @@ class CCXTData(Base):
         return df
 
     def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path) -> None:
-        df = self.get_all_ohlcv(symbol, timeframe)
+        df = self.get_ohlcv(symbol, timeframe)
 
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)

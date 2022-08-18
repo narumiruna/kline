@@ -41,7 +41,7 @@ class DeribitData(Base):
 
         return data['result']['data']
 
-    def get_all_ohlcv(self, currency: str, timeframe: str = '1m') -> pd.DataFrame:
+    def get_ohlcv(self, currency: str, timeframe: str = '1m') -> pd.DataFrame:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data
