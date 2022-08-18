@@ -1,10 +1,11 @@
 import pandas as pd
 from loguru import logger
 
+from ..fetcher import Fetcher
 from .api import get_klines
 
 
-class MAXOHLCVFetcher(object):
+class MAXOHLCVFetcher(Fetcher):
 
     def fetch_all(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form MaiCoin MAX with timeframe {}', symbol, timeframe)

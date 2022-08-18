@@ -2,11 +2,14 @@ import ccxt
 import pandas as pd
 from loguru import logger
 
+from .fetcher import Fetcher
 
-class CCXTOHLCVFetcher(object):
 
-    def __init__(self, exchange: ccxt.Exchange):
-        self.exchange = exchange
+class CCXTOHLCVFetcher(Fetcher):
+    exchange: ccxt.Exchange
+
+    def __init__(self, exchange: str):
+        self.exchange = getattr(ccxt, exchange.lower())()
 
     def fetch_all(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, self.exchange.name, timeframe)

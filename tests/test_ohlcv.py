@@ -1,19 +1,13 @@
-import ccxt
 import pandas as pd
 import pytest
 
-from cryptodataset import MAXOHLCVFetcher
 from cryptodataset import CCXTOHLCVFetcher
+from cryptodataset import MAXOHLCVFetcher
 
 
 @pytest.fixture
-def exchange() -> ccxt.Exchange:
-    return ccxt.binance()
-
-
-@pytest.fixture
-def ohlcv_fetcher(exchange: ccxt.Exchange) -> CCXTOHLCVFetcher:
-    return CCXTOHLCVFetcher(exchange)
+def ohlcv_fetcher() -> CCXTOHLCVFetcher:
+    return CCXTOHLCVFetcher('Binance')
 
 
 @pytest.fixture
