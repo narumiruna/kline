@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 
 from cryptodataset import MAXOHLCVFetcher
-from cryptodataset import OHLCVFetcher
+from cryptodataset import CCXTOHLCVFetcher
 
 
 @pytest.fixture
@@ -12,8 +12,8 @@ def exchange() -> ccxt.Exchange:
 
 
 @pytest.fixture
-def ohlcv_fetcher(exchange: ccxt.Exchange) -> OHLCVFetcher:
-    return OHLCVFetcher(exchange)
+def ohlcv_fetcher(exchange: ccxt.Exchange) -> CCXTOHLCVFetcher:
+    return CCXTOHLCVFetcher(exchange)
 
 
 @pytest.fixture
@@ -21,7 +21,7 @@ def max_ohlcv_fetcher() -> MAXOHLCVFetcher:
     return MAXOHLCVFetcher()
 
 
-def test_ohlcv_fetch_all_ohlcv(ohlcv_fetcher: OHLCVFetcher) -> None:
+def test_ohlcv_fetch_all_ohlcv(ohlcv_fetcher: CCXTOHLCVFetcher) -> None:
     symbol = 'BTC/USDT'
     timeframe = '1d'
     df = ohlcv_fetcher.fetch_all_ohlcv(symbol, timeframe)
