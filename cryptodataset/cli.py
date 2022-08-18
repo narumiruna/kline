@@ -11,7 +11,7 @@ from .utils import create_exchange_from_env
 
 
 def download_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, output_dir: str) -> None:
-    ohlcv_fetcher = CCXTOHLCVFetcher(exchange)
+    ohlcv_fetcher = CCXTOHLCVFetcher(exchange.name)
     df = ohlcv_fetcher.fetch_all(symbol, timeframe)
 
     output_dir = Path(output_dir)
