@@ -8,7 +8,7 @@ class CCXTOHLCVFetcher(object):
     def __init__(self, exchange: ccxt.Exchange):
         self.exchange = exchange
 
-    def fetch_all_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    def fetch_all(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, self.exchange.name, timeframe)
 
         since = None
