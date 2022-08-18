@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 from loguru import logger
 
@@ -15,7 +14,8 @@ class MAXOHLCVFetcher(object):
 
         all_ohlcv = []
         while True:
-            ohlcv = get_klines(symbol, period=to_period(timeframe), timestamp=since)
+            logger.info('fetch {} ohlcv with timeframe {} from {}', symbol, timeframe, pd.to_datetime(since, unit='s'))
+            ohlcv = get_klines(symbol, period=to_minutes(timeframe), timestamp=since)
 
             ohlcv.sort(key=lambda k: k[0])
 
@@ -28,17 +28,33 @@ class MAXOHLCVFetcher(object):
             all_ohlcv = ohlcv + all_ohlcv
 
             # a small amount of overlap to make sure the final data is continuous
-            since = ohlcv[0][0] - to_milliseconds(timeframe) * (limit - 1)
+            since = ohlcv[0][0] - to_seconds(timeframe) * (limit - 1)
 
         df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df = df.drop_duplicates('timestamp')
-
         df['timestamp'] = df['timestamp'] * 1000
         df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
         return df
 
 
-def to_period(timeframe: str) -> int:
+def to_seconds(timeframe: str) -> int:
+    return {
+        '1m': 60,
+        '5m': 60 * 5,
+        '15m': 60 * 15,
+        '30m': 60 * 30,
+        '1h': 60 * 60,
+        '2h': 60 * 60 * 2,
+        '4h': 60 * 60 * 4,
+        '6h': 60 * 60 * 6,
+        '12h': 60 * 60 * 12,
+        '1d': 60 * 60 * 24,
+        '3d': 60 * 60 * 24 * 3,
+        '1w': 60 * 60 * 24 * 7,
+    }[timeframe]
+
+
+def to_minutes(timeframe: str) -> int:
     return {
         '1m': 1,
         '5m': 5,

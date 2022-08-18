@@ -24,7 +24,7 @@ def max_ohlcv_fetcher() -> MAXOHLCVFetcher:
 def test_ohlcv_fetch_all_ohlcv(ohlcv_fetcher: CCXTOHLCVFetcher) -> None:
     symbol = 'BTC/USDT'
     timeframe = '1d'
-    df = ohlcv_fetcher.fetch_all_ohlcv(symbol, timeframe)
+    df = ohlcv_fetcher.fetch_all(symbol, timeframe)
 
     assert isinstance(df, pd.DataFrame)
     assert len(df) > 0
