@@ -6,7 +6,7 @@ import ccxt
 import click
 from loguru import logger
 
-from .ohlcv import CCXTOHLCVFetcher
+from .ccxt_ohlcv import CCXTOHLCVFetcher
 from .utils import create_exchange_from_env
 
 
