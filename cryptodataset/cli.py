@@ -12,6 +12,11 @@ from .max import get_markets
 from .utils import create_exchange_from_env
 
 
+@click.group()
+def cli():
+    pass
+
+
 def download_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, output_dir: Path) -> None:
     ohlcv_fetcher = CCXTOHLCVFetcher(exchange.name)
     df = ohlcv_fetcher.fetch_all(symbol, timeframe)
@@ -22,11 +27,6 @@ def download_ohlcv(exchange: ccxt.Exchange, symbol: str, timeframe: str, output_
 
     logger.info('saving ohlcv to {}', csv_path)
     df.to_csv(csv_path, index=False)
-
-
-@click.group()
-def cli():
-    pass
 
 
 @cli.command()
