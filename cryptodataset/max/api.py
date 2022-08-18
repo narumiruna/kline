@@ -4,7 +4,7 @@ from typing import List
 import requests
 
 
-def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None)-> List[List[Number]]:
+def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> List[List[Number]]:
     url = 'https://max-api.maicoin.com/api/v2/k'
 
     params = {'market': market.lower(), 'limit': limit, 'period': period}
@@ -13,4 +13,3 @@ def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int 
 
     resp = requests.get(url, params=params)
     return resp.json()
-
