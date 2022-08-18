@@ -1,4 +1,3 @@
-from .ccxt_ohlcv import CCXTOHLCVFetcher
-from .fetcher import Fetcher
-from .max import MAXOHLCVFetcher
-from .volatility import VolatilityFetcher
+from .ccxt import CCXTData
+from .deribit import DeribitData
+from .max import MAXData

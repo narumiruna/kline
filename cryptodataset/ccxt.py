@@ -1,17 +1,23 @@
+from pathlib import Path
+from typing import List
+
 import ccxt
 import pandas as pd
 from loguru import logger
 
-from .fetcher import Fetcher
+from .base import Base
 
 
-class CCXTOHLCVFetcher(Fetcher):
+class CCXTData(Base):
     exchange: ccxt.Exchange
 
     def __init__(self, exchange: str):
         self.exchange = getattr(ccxt, exchange.lower())()
 
-    def fetch_all(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    def get_market_symbols(self) -> List[str]:
+        return [market['symbol'] for market in self.exchange.fetch_markets()]
+
+    def get_all_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, self.exchange.name, timeframe)
 
         since = None
@@ -38,6 +44,16 @@ class CCXTOHLCVFetcher(Fetcher):
         df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
 
         return df
+
+    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path) -> None:
+        df = self.get_all_ohlcv(symbol, timeframe)
+
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / '{}_{}_{}.csv'.format(self.exchange.name, symbol.replace('/', '').upper(), timeframe)
+
+        logger.info('saving ohlcv to {}', csv_path)
+        df.to_csv(csv_path, index=False)
 
 
 def to_milliseconds(timeframe: str) -> int:
