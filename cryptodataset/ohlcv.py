@@ -3,7 +3,7 @@ import pandas as pd
 from loguru import logger
 
 
-class OHLCVFetcher(object):
+class CCXTOHLCVFetcher(object):
 
     def __init__(self, exchange: ccxt.Exchange):
         self.exchange = exchange
