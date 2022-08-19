@@ -1,13 +1,35 @@
+from numbers import Number
+from pathlib import Path
+from typing import List
+
 import pandas as pd
+import requests
 from loguru import logger
 
-from ..fetcher import Fetcher
-from .api import get_klines
+from .base import Base
+
+BASE_URL = 'https://max-api.maicoin.com'
 
 
-class MAXOHLCVFetcher(Fetcher):
+def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> List[List[Number]]:
+    url = f'{BASE_URL}/api/v2/k'
 
-    def fetch_all(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    params = {'market': market.replace('/', '').lower(), 'limit': limit, 'period': period}
+    if timestamp is not None:
+        params['timestamp'] = timestamp
+
+    resp = requests.get(url, params=params)
+    return resp.json()
+
+
+class MAXData(Base):
+
+    def get_market_symbols(self) -> List[str]:
+        url = f'{BASE_URL}/api/v2/markets'
+        resp = requests.get(url)
+        return [market['name'] for market in resp.json()]
+
+    def get_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form MaiCoin MAX with timeframe {}', symbol, timeframe)
 
         since = None
@@ -36,6 +58,15 @@ class MAXOHLCVFetcher(Fetcher):
         df['timestamp'] = df['timestamp'] * 1000
         df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
         return df
+
+    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path) -> None:
+        df = self.get_ohlcv(symbol, timeframe)
+
+        output_dir.mkdir(parents=True, exist_ok=True)
+        csv_path = output_dir / 'MAX_{}_{}.csv'.format(symbol.replace('/', '').upper(), timeframe)
+
+        logger.info('saving ohlcv to {}', csv_path)
+        df.to_csv(csv_path, index=False)
 
 
 def to_seconds(timeframe: str) -> int:
