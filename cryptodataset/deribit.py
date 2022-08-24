@@ -41,7 +41,7 @@ class DeribitData(Base):
 
         return data['result']['data']
 
-    def get_ohlcv(self, currency: str, timeframe: str = '1m') -> pd.DataFrame:
+    def get_ohlcv(self, currency: str, timeframe: str = '1m', limit: int = None) -> pd.DataFrame:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data
@@ -51,6 +51,10 @@ class DeribitData(Base):
 
         data = []
         while True:
+            if limit is not None and len(data) >= limit:
+                data = data[-limit:]
+                break
+
             new_data = self._fetch(currency, timeframe, since=0, until=until)
 
             # break the loop if there is no new data
