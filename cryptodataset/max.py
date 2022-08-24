@@ -29,21 +29,21 @@ class MAXData(Base):
         resp = requests.get(url)
         return [market['name'] for market in resp.json()]
 
-    def get_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    def get_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form MaiCoin MAX with timeframe {}', symbol, timeframe)
 
         since = None
-        limit = None
 
         all_ohlcv = []
         while True:
+            if limit is not None and len(all_ohlcv) >= limit:
+                all_ohlcv = all_ohlcv[-limit:]
+                break
+
             logger.info('fetch {} ohlcv with timeframe {} from {}', symbol, timeframe, pd.to_datetime(since, unit='s'))
             ohlcv = get_klines(symbol, period=to_minutes(timeframe), timestamp=since)
 
             ohlcv.sort(key=lambda k: k[0])
-
-            if limit is None:
-                limit = len(ohlcv)
 
             if all_ohlcv and ohlcv[0][0] == all_ohlcv[0][0]:
                 break
@@ -51,7 +51,7 @@ class MAXData(Base):
             all_ohlcv = ohlcv + all_ohlcv
 
             # a small amount of overlap to make sure the final data is continuous
-            since = ohlcv[0][0] - to_seconds(timeframe) * (limit - 1)
+            since = ohlcv[0][0] - to_seconds(timeframe) * (len(ohlcv) - 1)
 
         df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df = df.drop_duplicates('timestamp')

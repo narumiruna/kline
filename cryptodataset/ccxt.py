@@ -17,19 +17,19 @@ class CCXTData(Base):
     def get_market_symbols(self) -> List[str]:
         return [market['symbol'] for market in self.exchange.fetch_markets()]
 
-    def get_ohlcv(self, symbol: str, timeframe: str) -> pd.DataFrame:
+    def get_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> pd.DataFrame:
         logger.info('fetching {} ohlcv form {} with timeframe {}', symbol, self.exchange.name, timeframe)
 
         since = None
-        limit = None
 
         all_ohlcv = []
         while True:
+            if limit is not None and len(all_ohlcv) >= limit:
+                all_ohlcv = all_ohlcv[-limit:]
+                break
+
             ohlcv = self.exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)
             ohlcv.sort(key=lambda k: k[0])
-
-            if limit is None:
-                limit = len(ohlcv)
 
             if all_ohlcv and ohlcv[0][0] == all_ohlcv[0][0]:
                 break
@@ -37,7 +37,7 @@ class CCXTData(Base):
             all_ohlcv = ohlcv + all_ohlcv
 
             # a small amount of overlap to make sure the final data is continuous
-            since = ohlcv[0][0] - to_milliseconds(timeframe) * (limit - 1)
+            since = ohlcv[0][0] - to_milliseconds(timeframe) * (len(ohlcv) - 1)
 
         df = pd.DataFrame(all_ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df = df.drop_duplicates('timestamp')
