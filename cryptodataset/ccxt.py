@@ -45,13 +45,16 @@ class CCXTData(Base):
 
         return df
 
-    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path) -> None:
-        df = self.get_ohlcv(symbol, timeframe)
-
+    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path, skip: bool=False) -> None:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_path = output_dir / '{}_{}_{}.csv'.format(self.exchange.name, symbol.replace('/', '').upper(), timeframe)
 
+        if skip and csv_path.exists():
+            logger.info('{} already exists, skip', csv_path)
+            return
+
+        df = self.get_ohlcv(symbol, timeframe)
         logger.info('saving ohlcv to {}', csv_path)
         df.to_csv(csv_path, index=False)
 
