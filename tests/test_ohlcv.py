@@ -7,7 +7,7 @@ from cryptodataset import MAXData
 
 @pytest.fixture
 def ccxt_data() -> CCXTData:
-    return CCXTData('Binance')
+    return CCXTData('KuCoin')
 
 
 @pytest.fixture
