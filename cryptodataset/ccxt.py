@@ -11,7 +11,7 @@ from .base import Base
 class CCXTData(Base):
     exchange: ccxt.Exchange
 
-    def __init__(self, exchange: str):
+    def __init__(self, exchange: str) -> None:
         self.exchange = getattr(ccxt, exchange.lower())()
 
     def get_market_symbols(self) -> List[str]:
@@ -45,7 +45,7 @@ class CCXTData(Base):
 
         return df
 
-    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path, skip: bool=False) -> None:
+    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path, skip: bool = False) -> pd.DataFrame:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_path = output_dir / '{}_{}_{}.csv'.format(self.exchange.name, symbol.replace('/', '').upper(), timeframe)
@@ -57,6 +57,8 @@ class CCXTData(Base):
         df = self.get_ohlcv(symbol, timeframe)
         logger.info('saving ohlcv to {}', csv_path)
         df.to_csv(csv_path, index=False)
+
+        return df
 
 
 def to_milliseconds(timeframe: str) -> int:
