@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import List
+from typing import Union
 
 import ccxt
 import pandas as pd
@@ -45,16 +46,31 @@ class CCXTData(Base):
 
         return df
 
-    def download_ohlcv(self, symbol: str, timeframe: str, output_dir: Path, skip: bool = False) -> pd.DataFrame:
+    def build_path(self, output_dir: Union[str, Path], symbol: str, timeframe: str) -> Path:
+        if isinstance(output_dir, str):
+            output_dir = Path(output_dir)
+
+        return output_dir / '{}_{}_{}.csv'.format(self.exchange.name, symbol.replace('/', '').upper(), timeframe)
+
+    def download_ohlcv(self,
+                       symbol: str,
+                       timeframe: str,
+                       limit: int = None,
+                       output_dir: Path = Path('data'),
+                       skip: bool = False) -> pd.DataFrame:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        csv_path = output_dir / '{}_{}_{}.csv'.format(self.exchange.name, symbol.replace('/', '').upper(), timeframe)
+
+        csv_path = self.build_path(output_dir, symbol, timeframe)
 
         if skip and csv_path.exists():
-            logger.info('{} already exists, skip', csv_path)
-            return
+            logger.info('{} already exists, reading data from file', csv_path)
 
-        df = self.get_ohlcv(symbol, timeframe)
+            df = pd.read_csv(csv_path)
+            df['datetime'] = pd.to_datetime(df['timestamp'], unit='ms')
+            return df
+
+        df = self.get_ohlcv(symbol, timeframe, limit=limit)
         logger.info('saving ohlcv to {}', csv_path)
         df.to_csv(csv_path, index=False)
 
