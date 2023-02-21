@@ -33,7 +33,7 @@ def ccxt(exchange: str, symbol: List[str], timeframe: List[str], output_dir: str
         timeframe = list(ccxt_data.exchange.timeframes.keys())
 
     for s, tf in product(symbol, timeframe):
-        ccxt_data.download_ohlcv(s, tf, output_dir, skip=skip)
+        ccxt_data.download_ohlcv(s, tf, output_dir=output_dir, skip=skip)
 
 
 @cli.command()
@@ -51,7 +51,7 @@ def max(symbol: List[str], timeframe: List[str], output_dir: str, all_symbols: b
         symbol = max_data.get_market_symbols()
 
     for s, tf in product(symbol, timeframe):
-        max_data.download_ohlcv(s, tf, output_dir, skip=skip)
+        max_data.download_ohlcv(s, tf, output_dir=output_dir, skip=skip)
 
 
 if __name__ == '__main__':
