@@ -148,7 +148,10 @@ class TradingEnv(gym.Env):
         Returns:
             pd.DataFrame: the loaded and preprocessed data
         """
-        df = CCXTData(self.exchange).download_ohlcv(self.symbol, self.timeframe, self.root, skip=not self.download)
+        df = CCXTData(self.exchange).download_ohlcv(self.symbol,
+                                                    self.timeframe,
+                                                    output_dir=self.root,
+                                                    skip=not self.download)
 
         # preprocess the data
         df = preprocess(df, self.symbol)
