@@ -12,7 +12,7 @@ class RandomPredictor:
         return self.action_space.sample()
 
 
-def test_evaluation_model(self):
+def test_evaluation_model():
     env = gym.make('CartPole-v1')
     model = RandomPredictor(env)
     mean_reward, std_reward = evaluate_model(model, env)
