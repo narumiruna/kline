@@ -167,7 +167,7 @@ class TradingEnv(gym.Env):
         if self.action_type == 'continuous':
             return Box(low=-1, high=1, shape=(1,), dtype=np.float32)
         elif self.action_type == 'discrete':
-            return Discrete(2)
+            return Discrete(3)
         else:
             raise ValueError(f'unknown action_type {self.action_type}')
 
@@ -300,7 +300,7 @@ class TradingEnv(gym.Env):
         return self.get_price() / self.get_price(0) - 1.0
 
     def take_discrete_action(self, action: int) -> None:
-        if action == 1:  # buy
+        if action == 2:  # buy
             amount = self.cash
             if self.max_amount > 0:
                 amount = min(self.cash, self.max_amount)
@@ -315,8 +315,10 @@ class TradingEnv(gym.Env):
 
             self.quantity -= sell_qty
             self.cash += sell_qty * self.get_price() * (1 - self.fee)
+        elif action == 1:  # hold
+            pass
         else:
-            raise ValueError('action should be 0 or 1')
+            raise ValueError('action should be 0, 1 or 2, got {}'.format(action))
 
     def take_continuous_action(self, action: float) -> None:
         action = float(action)
