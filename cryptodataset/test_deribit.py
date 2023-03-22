@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from cryptodataset import DeribitData
+from .deribit import DeribitData
 
 
 @pytest.fixture

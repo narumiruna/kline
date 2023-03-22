@@ -1,6 +1,6 @@
 import pytest
 
-from cryptodataset.envs import TradingEnv
+from .trading import TradingEnv
 
 
 def test_tradingenv():

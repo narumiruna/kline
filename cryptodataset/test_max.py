@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from cryptodataset import MAXData
+from .max import MAXData
 
 
 @pytest.fixture

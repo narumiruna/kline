@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from cryptodataset import CCXTData
+from .ccxt import CCXTData
 
 
 @pytest.fixture
