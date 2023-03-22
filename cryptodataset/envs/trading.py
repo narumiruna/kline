@@ -84,7 +84,7 @@ class TradingEnv(gym.Env):
         Args:
             root (str, optional): the root directory to store the downloaded data. Defaults to 'data'.
             exchange (str, optional): the exchange name. Defaults to 'Binance'.
-            market (str, optional): the market name. Defaults to 'BTCUSDT'.
+            symbol (str, optional): the symbol. Defaults to 'BTCUSDT'.
             timeframe (str, optional): the timeframe. Defaults to '1h'.
             download (bool, optional): whether to download the data from exchange. Defaults to False.
             fee (float, optional): the trading fee. Defaults to 0.0.
@@ -204,7 +204,7 @@ class TradingEnv(gym.Env):
 
         # all in
         # TODO: add a parameter to control this
-        self.cash, self.quantity = 0, self.cash / self.get_price()
+        # self.cash, self.quantity = 0, self.cash / self.get_price()
 
         self.step_index = 0
         self.values = [self.get_account_value()]
@@ -353,14 +353,16 @@ class TradingEnv(gym.Env):
         }
 
 
-def preprocess(df: pd.DataFrame, market: str) -> pd.DataFrame:
+def preprocess(df: pd.DataFrame, symbol: str) -> pd.DataFrame:
+    symbol = symbol.replace("/", "").upper()
+
     new_df = pd.DataFrame({'datetime': df['datetime']})
 
     # close price
     new_df['close'] = df['close']
 
     # normalized close price
-    new_df['normalized_close'] = (df['close'] - CLOSE_PRICE_MEAN[market]) / CLOSE_PRICE_STD[market]
+    new_df['normalized_close'] = (df['close'] - CLOSE_PRICE_MEAN[symbol]) / CLOSE_PRICE_STD[symbol]
 
     # returns
     for n in [12, 24, 30, 60, 90]:
