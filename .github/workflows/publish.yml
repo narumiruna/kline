@@ -8,6 +8,7 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+
     strategy:
       max-parallel: 1
       matrix:
@@ -30,6 +31,5 @@ jobs:
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
         run: |
-          pip install poetry
           poetry build -f wheel
           poetry publish -u __token__ -p $PYPI_TOKEN

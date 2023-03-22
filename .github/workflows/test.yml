@@ -30,7 +30,6 @@ jobs:
         env:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
         run: |
-          pip install poetry
           poetry config virtualenvs.create false
           poetry install
           poetry run pytest -v -s .
