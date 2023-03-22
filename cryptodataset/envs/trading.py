@@ -1,6 +1,5 @@
 import math
 import random
-from enum import Enum
 from typing import List
 from typing import Optional
 from typing import Tuple
