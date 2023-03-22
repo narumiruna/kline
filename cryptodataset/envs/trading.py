@@ -16,7 +16,7 @@ from loguru import logger
 
 from ..ccxt import CCXTData
 
-REWARD_TYPES = ('return', 'log_return', 'base_return', 'base_log_return')
+REWARD_TYPES = ('return', 'log_return')
 ACTION_TYPES = ('discrete', 'continuous')
 
 # calculated by scripts/calculate_close_prices_mean_and_std.py
@@ -75,7 +75,7 @@ class TradingEnv(gym.Env):
         random_length: int = 0,
         mean: Optional[List[float]] = None,
         std: Optional[List[float]] = None,
-        reward_type: str = 'base_log_return',
+        reward_type: str = 'log_return',
         action_type: str = 'discrete',
         metric_currency: str = 'quote',
     ) -> None:
@@ -94,7 +94,7 @@ class TradingEnv(gym.Env):
             init_quantity (float, optional): the initial quantity. Defaults to 0.0.
             max_amount (float, optional): the maximum amount of cash to use for each trade. Defaults to 2000.
             random_length (int, optional): the length of random data to use. Defaults to 0.
-            reward_type (str, optional): the reward type. Defaults to 'base_log_return'.
+            reward_type (str, optional): the reward type. Defaults to 'log_return'.
             action_type (str, optional): the action type. Defaults to 'discrete'.
             metric_currency (str, optional): the currency to use for metrics. Defaults to 'quote'.
         """
@@ -266,35 +266,25 @@ class TradingEnv(gym.Env):
 
     def calculate_reward(self) -> float:
         """Calculate reward"""
-
         cur_value = self.values[self.step_index]
         pre_value = self.values[self.step_index - 1]
-        cur_price = self.get_price(self.step_index)
-        pre_price = self.get_price(self.step_index - 1)
 
         if self.reward_type == 'return':
             return cur_value / pre_value - 1
         elif self.reward_type == 'log_return':
             return math.log(cur_value / pre_value)
-        elif self.reward_type == 'base_return':
-            return (cur_value / cur_price) / (pre_value / pre_price) - 1
-        elif self.reward_type == 'base_log_return':
-            return math.log((cur_value / cur_price) / (pre_value / pre_price))
         else:
             raise ValueError('Unknown reward type: {}'.format(self.reward_type))
 
     def get_account_value(self) -> float:
-        return self.cash + self.quantity * self.get_price()
+        if self.metric_currency == 'quote':
+            return self.cash + self.quantity * self.get_price()
+        else:
+            return self.cash / self.get_price() + self.quantity
 
     def get_price(self, i: int = None) -> float:
         i = self.step_index if i is None else i
         return float(self.prices.iloc[i])
-
-    def get_cumulative_return(self) -> float:
-        if self.metric_currency == 'quote':
-            return self.values[-1] / self.values[0] - 1.0
-        else:
-            return (self.values[-1] / self.get_price()) / (self.values[0] / self.get_price(0)) - 1
 
     def get_baseline_cumulative_return(self) -> float:
         return self.get_price() / self.get_price(0) - 1.0
@@ -353,18 +343,13 @@ class TradingEnv(gym.Env):
             self.quantity = 0
 
     def get_metrics(self):
-        values = pd.Series(self.values, index=self.df.index[-len(self.values):])
-        prices = pd.Series(self.prices, index=self.df.index[-len(self.prices):])
-
-        if self.metric_currency == 'base':
-            values = values / prices
-
+        values = pd.Series(self.values, index=self.df.index[:len(self.values)])
         returns = values.pct_change().dropna()
 
         return {
+            'compsum': qs.stats.compsum(returns).iloc[-1],
             'max_drawdown': qs.stats.max_drawdown(values),
             'sharpe': qs.stats.sharpe(returns),
-            'cumulative_return': self.get_cumulative_return(),
         }
 
 
