@@ -137,6 +137,7 @@ class TradingEnv(gym.Env):
         self.values = []
         self.rewards = []
         self.actions = []
+        self.datetimes = []
 
         self.action_space = self._get_action_space()
         self.observation_space = self._get_observation_space()
@@ -210,6 +211,7 @@ class TradingEnv(gym.Env):
         self.values = [self.get_account_value()]
         self.rewards = [0.0]
         self.actions = []
+        self.datetimes = [self.df.index[self.step_index]]
 
         return self.get_observation()
 
@@ -234,6 +236,7 @@ class TradingEnv(gym.Env):
         self.step_index += 1
 
         self.values.append(self.get_account_value())
+        self.datetimes.append(self.df.index[self.step_index])
 
         reward = self.calculate_reward()
         self.rewards.append(reward)
@@ -343,7 +346,7 @@ class TradingEnv(gym.Env):
             self.quantity = 0
 
     def get_metrics(self):
-        values = pd.Series(self.values, index=self.df.index[:len(self.values)])
+        values = pd.Series(self.values, index=self.datetimes)
         returns = values.pct_change().dropna()
 
         return {
