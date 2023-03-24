@@ -13,7 +13,6 @@ download:
 		-s XRPUSDT \
 		-s BCHUSDT \
 		-s LTCUSDT \
-		-s BCNTUSDT \
 		-s SANDUSDT \
 		-s LINKUSDT \
 		-s DOGEUSDT \
@@ -23,9 +22,7 @@ download:
 		-s ADAUSDT \
 		-s SOLUSDT \
 		-s SHIBUSDT \
-		-s LOOTUSDT \
 		-s APEUSDT \
-		-s RLYUSDT \
 		-s ETCUSDT \
 		-t 1h \
 		-t 1d \
