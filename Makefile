@@ -2,7 +2,7 @@ install:
 	poetry install
 
 test: install
-	poetry run pytest -v -s tests
+	poetry run pytest -v -s .
 
 download:
 	poetry run cryptodataset ccxt \
