@@ -80,6 +80,7 @@ class CCXTData(Base):
 
 def to_milliseconds(timeframe: str) -> int:
     return {
+        '1s': 1000,
         '15s': 1000 * 15,
         '1m': 1000 * 60,
         '5m': 1000 * 60 * 5,
