@@ -8,10 +8,10 @@ import pandas as pd
 import requests
 from loguru import logger
 
-from .base import Base
+from .base import BaseFetcher
 
 
-class DeribitData(Base):
+class DeribitData(BaseFetcher):
     base_url = "https://www.deribit.com"
     timeframes = {
         "1s": "1",
@@ -52,7 +52,7 @@ class DeribitData(Base):
 
         return data["result"]["data"]
 
-    def get_ohlcv(
+    def fetch_ohlcv(
         self, currency: str, timeframe: str = "1m", limit: Optional[int] = None
     ) -> pd.DataFrame:
         """Fetch all volatility index data from deribit

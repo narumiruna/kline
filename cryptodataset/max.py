@@ -8,7 +8,7 @@ import pandas as pd
 import requests
 from loguru import logger
 
-from .base import Base
+from .base import BaseFetcher
 
 BASE_URL = "https://max-api.maicoin.com"
 
@@ -30,13 +30,15 @@ def get_klines(
     return resp.json()
 
 
-class MAXData(Base):
+class MAXData(BaseFetcher):
     def get_market_symbols(self) -> List[str]:
         url = f"{BASE_URL}/api/v2/markets"
         resp = requests.get(url)
         return [market["name"] for market in resp.json()]
 
-    def get_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> pd.DataFrame:
+    def fetch_ohlcv(
+        self, symbol: str, timeframe: str, limit: int = None
+    ) -> pd.DataFrame:
         logger.info(
             "fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe
         )
@@ -93,7 +95,7 @@ class MAXData(Base):
             logger.info("{} already exists, skip", csv_path)
             return
 
-        df = self.get_ohlcv(symbol, timeframe, limit=limit)
+        df = self.fetch_ohlcv(symbol, timeframe, limit=limit)
         logger.info("saving ohlcv to {}", csv_path)
         df.to_csv(csv_path, index=False)
 

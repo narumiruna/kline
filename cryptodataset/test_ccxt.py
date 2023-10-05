@@ -13,7 +13,7 @@ def test_ohlcv_get_ohlcv_limit(ccxt_data: CCXTData) -> None:
     symbol = "BTC/USDT"
     timeframe = "1d"
     limit = 30
-    df = ccxt_data.get_ohlcv(symbol, timeframe, limit=limit)
+    df = ccxt_data.fetch_ohlcv(symbol, timeframe, limit=limit)
 
     assert isinstance(df, pd.DataFrame)
     assert len(df) == limit

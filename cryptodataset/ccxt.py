@@ -7,10 +7,10 @@ import ccxt
 import pandas as pd
 from loguru import logger
 
-from .base import Base
+from .base import BaseFetcher
 
 
-class CCXTData(Base):
+class CCXTData(BaseFetcher):
     exchange: ccxt.Exchange
 
     def __init__(self, exchange: str) -> None:
@@ -19,7 +19,7 @@ class CCXTData(Base):
     def get_market_symbols(self) -> List[str]:
         return [market["symbol"] for market in self.exchange.fetch_markets()]
 
-    def get_ohlcv(
+    def fetch_ohlcv(
         self, symbol: str, timeframe: str, limit: Optional[int] = None
     ) -> pd.DataFrame:
         logger.info(
@@ -88,7 +88,7 @@ class CCXTData(Base):
             df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
             return df
 
-        df = self.get_ohlcv(symbol, timeframe, limit=limit)
+        df = self.fetch_ohlcv(symbol, timeframe, limit=limit)
         logger.info("saving ohlcv to {}", csv_path)
         df.to_csv(csv_path, index=False)
 

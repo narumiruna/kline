@@ -1,5 +1,5 @@
-class Base:
-    def get_ohlcv():
+class BaseFetcher:
+    def fetch_ohlcv():
         raise NotImplementedError
 
     def download_ohlcv():
