@@ -10,8 +10,8 @@ def max_data() -> MAXData:
 
 
 def test_max_ohlcv_get_ohlcv_limit(max_data: MAXData) -> None:
-    symbol = 'BTCUSDT'
-    timeframe = '1d'
+    symbol = "BTCUSDT"
+    timeframe = "1d"
     limit = 30
 
     df = max_data.get_ohlcv(symbol, timeframe, limit)

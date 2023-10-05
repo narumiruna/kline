@@ -1,5 +1,4 @@
 class Base:
-
     def get_ohlcv():
         raise NotImplementedError
 

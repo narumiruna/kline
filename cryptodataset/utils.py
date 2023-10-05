@@ -17,10 +17,10 @@ def to_datetime(ts: int) -> datetime:
 
 
 def create_exchange_from_env(exchange_name: str) -> ccxt.Exchange:
-    logger.info('creating exchange from env')
+    logger.info("creating exchange from env")
 
     config = {
-        'apiKey': os.environ.get(f'{exchange_name.upper()}_API_KEY'),
-        'secret': os.environ.get(f'{exchange_name.upper()}_API_SECRET'),
+        "apiKey": os.environ.get(f"{exchange_name.upper()}_API_KEY"),
+        "secret": os.environ.get(f"{exchange_name.upper()}_API_SECRET"),
     }
     return getattr(ccxt, exchange_name.lower())(config)
