@@ -42,7 +42,7 @@ def get_klines(
     return resp.json()
 
 
-class MAXData(BaseFetcher):
+class MAXFetcher(BaseFetcher):
     def get_market_symbols(self) -> List[str]:
         url = f"{BASE_URL}/api/v2/markets"
         resp = requests.get(url)

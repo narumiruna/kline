@@ -21,7 +21,7 @@ def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
     return df
 
 
-class CCXTData(BaseFetcher):
+class CCXTFetcher(BaseFetcher):
     exchange: ccxt.Exchange
 
     def __init__(self, exchange: str) -> None:

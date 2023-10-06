@@ -22,7 +22,7 @@ def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
     return df
 
 
-class DeribitData(BaseFetcher):
+class DeribitFetecher(BaseFetcher):
     base_url = "https://www.deribit.com"
     timeframes = {
         "1s": "1",
@@ -65,7 +65,7 @@ class DeribitData(BaseFetcher):
 
     def fetch_ohlcv(
         self, currency: str, timeframe: str = "1m", limit: Optional[int] = None
-    ) -> pd.DataFrame:
+    ) -> List[OHLCV]:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data

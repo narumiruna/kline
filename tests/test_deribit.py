@@ -1,15 +1,15 @@
 import pytest
 
 from cryptodataset.base import OHLCV
-from cryptodataset.deribit import DeribitData
+from cryptodataset.deribit import DeribitFetecher
 
 
 @pytest.fixture
-def deribit_data() -> DeribitData:
-    return DeribitData()
+def deribit_data() -> DeribitFetecher:
+    return DeribitFetecher()
 
 
-def test_ohlcv_fetch_all_ohlcv(deribit_data: DeribitData) -> None:
+def test_ohlcv_fetch_all_ohlcv(deribit_data: DeribitFetecher) -> None:
     currency = "BTC"
     timeframe = "1d"
     ohlcvs = deribit_data.fetch_ohlcv(currency, timeframe)

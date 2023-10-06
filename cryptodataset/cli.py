@@ -5,8 +5,8 @@ from typing import List
 import click
 from loguru import logger
 
-from . import CCXTData
-from . import MAXData
+from . import CCXTFetcher
+from . import MAXFetcher
 
 
 @click.group()
@@ -50,7 +50,7 @@ def ccxt(
     skip: bool,
 ) -> None:
     """Download OHLCV data from cryptocurrency exchange"""
-    ccxt_data = CCXTData(exchange)
+    ccxt_data = CCXTFetcher(exchange)
 
     if all_symbols:
         symbol = ccxt_data.get_market_symbols()
@@ -96,7 +96,7 @@ def max(
 ) -> None:
     output_dir = Path(output_dir)
 
-    max_data = MAXData()
+    max_data = MAXFetcher()
 
     if all_symbols:
         symbol = max_data.get_market_symbols()

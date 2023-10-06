@@ -1,15 +1,15 @@
 import pytest
 
 from cryptodataset.base import OHLCV
-from cryptodataset.max import MAXData
+from cryptodataset.max import MAXFetcher
 
 
 @pytest.fixture
-def max_data() -> MAXData:
-    return MAXData()
+def max_data() -> MAXFetcher:
+    return MAXFetcher()
 
 
-def test_max_ohlcv_get_ohlcv_limit(max_data: MAXData) -> None:
+def test_max_ohlcv_get_ohlcv_limit(max_data: MAXFetcher) -> None:
     symbol = "BTCUSDT"
     timeframe = "1d"
     limit = 30

@@ -1,15 +1,15 @@
 import pytest
 
 from cryptodataset.base import OHLCV
-from cryptodataset.ccxt import CCXTData
+from cryptodataset.ccxt import CCXTFetcher
 
 
 @pytest.fixture
-def ccxt_data() -> CCXTData:
-    return CCXTData("KuCoin")
+def ccxt_data() -> CCXTFetcher:
+    return CCXTFetcher("KuCoin")
 
 
-def test_ohlcv_get_ohlcv_limit(ccxt_data: CCXTData) -> None:
+def test_ohlcv_get_ohlcv_limit(ccxt_data: CCXTFetcher) -> None:
     symbol = "BTC/USDT"
     timeframe = "1d"
     limit = 30
