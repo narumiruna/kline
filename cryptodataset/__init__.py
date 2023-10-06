@@ -1,3 +1,3 @@
-from .ccxt import CCXTData
-from .deribit import DeribitData
-from .max import MAXData
+from .ccxt import CCXTFetcher
+from .deribit import DeribitFetecher
+from .max import MAXFetcher
