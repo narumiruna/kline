@@ -1,7 +1,7 @@
 import pytest
 
-from .base import OHLCV
-from .ccxt import CCXTData
+from cryptodataset.base import OHLCV
+from cryptodataset.ccxt import CCXTData
 
 
 @pytest.fixture

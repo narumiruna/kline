@@ -1,7 +1,7 @@
 import pytest
 
-from .base import OHLCV
-from .max import MAXData
+from cryptodataset.base import OHLCV
+from cryptodataset.max import MAXData
 
 
 @pytest.fixture

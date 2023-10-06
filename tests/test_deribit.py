@@ -1,7 +1,7 @@
 import pytest
 
-from .base import OHLCV
-from .deribit import DeribitData
+from cryptodataset.base import OHLCV
+from cryptodataset.deribit import DeribitData
 
 
 @pytest.fixture

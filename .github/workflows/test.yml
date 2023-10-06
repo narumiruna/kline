@@ -31,4 +31,4 @@ jobs:
           CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
         run: |
           poetry install
-          poetry run pytest -v -s .
+          poetry run pytest -v -s tests
