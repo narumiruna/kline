@@ -1,6 +1,6 @@
-import pandas as pd
 import pytest
 
+from .base import OHLCV
 from .ccxt import CCXTData
 
 
@@ -13,7 +13,7 @@ def test_ohlcv_get_ohlcv_limit(ccxt_data: CCXTData) -> None:
     symbol = "BTC/USDT"
     timeframe = "1d"
     limit = 30
-    df = ccxt_data.fetch_ohlcv(symbol, timeframe, limit=limit)
+    ohlcvs = ccxt_data.fetch_ohlcv(symbol, timeframe, limit=limit)
 
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) == limit
+    assert all([isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs])
+    assert len(ohlcvs) == limit

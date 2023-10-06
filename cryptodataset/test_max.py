@@ -1,6 +1,6 @@
-import pandas as pd
 import pytest
 
+from .base import OHLCV
 from .max import MAXData
 
 
@@ -14,6 +14,7 @@ def test_max_ohlcv_get_ohlcv_limit(max_data: MAXData) -> None:
     timeframe = "1d"
     limit = 30
 
-    df = max_data.fetch_ohlcv(symbol, timeframe, limit)
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) == limit
+    ohlcvs = max_data.fetch_ohlcv(symbol, timeframe, limit)
+
+    assert all([isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs])
+    assert len(ohlcvs) == limit

@@ -1,6 +1,6 @@
-import pandas as pd
 import pytest
 
+from .base import OHLCV
 from .deribit import DeribitData
 
 
@@ -12,7 +12,7 @@ def deribit_data() -> DeribitData:
 def test_ohlcv_fetch_all_ohlcv(deribit_data: DeribitData) -> None:
     currency = "BTC"
     timeframe = "1d"
-    df = deribit_data.fetch_ohlcv(currency, timeframe)
+    ohlcvs = deribit_data.fetch_ohlcv(currency, timeframe)
 
-    assert isinstance(df, pd.DataFrame)
-    assert len(df) > 0
+    assert all([isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs])
+    assert len(ohlcvs) > 0

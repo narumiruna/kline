@@ -7,7 +7,18 @@ import ccxt
 import pandas as pd
 from loguru import logger
 
+from .base import OHLCV
 from .base import BaseFetcher
+
+
+def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
+    df = pd.DataFrame(
+        [ohlcv.model_dump() for ohlcv in all_ohlcv],
+        columns=["timestamp", "open", "high", "low", "close", "volume"],
+    )
+    df = df.drop_duplicates("timestamp")
+    df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
+    return df
 
 
 class CCXTData(BaseFetcher):
@@ -21,7 +32,7 @@ class CCXTData(BaseFetcher):
 
     def fetch_ohlcv(
         self, symbol: str, timeframe: str, limit: Optional[int] = None
-    ) -> pd.DataFrame:
+    ) -> List[OHLCV]:
         logger.info(
             "fetching {} ohlcv form {} with timeframe {}",
             symbol,
@@ -31,10 +42,10 @@ class CCXTData(BaseFetcher):
 
         since = None
 
-        all_ohlcv = []
+        ohlcvs = []
         while True:
-            if limit is not None and len(all_ohlcv) >= limit:
-                all_ohlcv = all_ohlcv[-limit:]
+            if limit is not None and len(ohlcvs) >= limit:
+                ohlcvs = ohlcvs[-limit:]
                 break
 
             ohlcv = self.exchange.fetch_ohlcv(
@@ -42,21 +53,25 @@ class CCXTData(BaseFetcher):
             )
             ohlcv.sort(key=lambda k: k[0])
 
-            if all_ohlcv and ohlcv[0][0] == all_ohlcv[0][0]:
+            if ohlcvs and ohlcv[0][0] == ohlcvs[0][0]:
                 break
 
-            all_ohlcv = ohlcv + all_ohlcv
+            ohlcvs = ohlcv + ohlcvs
 
             # a small amount of overlap to make sure the final data is continuous
             since = ohlcv[0][0] - to_milliseconds(timeframe) * (len(ohlcv) - 1)
 
-        df = pd.DataFrame(
-            all_ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"]
-        )
-        df = df.drop_duplicates("timestamp")
-        df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
-
-        return df
+        return [
+            OHLCV(
+                timestamp=ohlcv[0],
+                open=ohlcv[1],
+                high=ohlcv[2],
+                low=ohlcv[3],
+                close=ohlcv[4],
+                volume=ohlcv[5],
+            )
+            for ohlcv in ohlcvs
+        ]
 
     def build_path(
         self, output_dir: Union[str, Path], symbol: str, timeframe: str
@@ -88,7 +103,7 @@ class CCXTData(BaseFetcher):
             df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
             return df
 
-        df = self.fetch_ohlcv(symbol, timeframe, limit=limit)
+        df = parse_ohlcv(self.fetch_ohlcv(symbol, timeframe, limit=limit))
         logger.info("saving ohlcv to {}", csv_path)
         df.to_csv(csv_path, index=False)
 

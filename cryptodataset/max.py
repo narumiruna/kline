@@ -8,9 +8,21 @@ import pandas as pd
 import requests
 from loguru import logger
 
+from .base import OHLCV
 from .base import BaseFetcher
 
 BASE_URL = "https://max-api.maicoin.com"
+
+
+def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
+    df = pd.DataFrame(
+        [ohlcv.model_dump for ohlcv in ohlcvs],
+        columns=["timestamp", "open", "high", "low", "close", "volume"],
+    )
+    df = df.drop_duplicates("timestamp")
+    df["timestamp"] = df["timestamp"] * 1000
+    df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
+    return df
 
 
 def get_klines(
@@ -38,17 +50,17 @@ class MAXData(BaseFetcher):
 
     def fetch_ohlcv(
         self, symbol: str, timeframe: str, limit: int = None
-    ) -> pd.DataFrame:
+    ) -> List[OHLCV]:
         logger.info(
             "fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe
         )
 
         since = None
 
-        all_ohlcv = []
+        ohlcvs = []
         while True:
-            if limit is not None and len(all_ohlcv) >= limit:
-                all_ohlcv = all_ohlcv[-limit:]
+            if limit is not None and len(ohlcvs) >= limit:
+                ohlcvs = ohlcvs[-limit:]
                 break
 
             logger.info(
@@ -61,21 +73,25 @@ class MAXData(BaseFetcher):
 
             ohlcv.sort(key=lambda k: k[0])
 
-            if all_ohlcv and ohlcv[0][0] == all_ohlcv[0][0]:
+            if ohlcvs and ohlcv[0][0] == ohlcvs[0][0]:
                 break
 
-            all_ohlcv = ohlcv + all_ohlcv
+            ohlcvs = ohlcv + ohlcvs
 
             # a small amount of overlap to make sure the final data is continuous
             since = ohlcv[0][0] - to_seconds(timeframe) * (len(ohlcv) - 1)
 
-        df = pd.DataFrame(
-            all_ohlcv, columns=["timestamp", "open", "high", "low", "close", "volume"]
-        )
-        df = df.drop_duplicates("timestamp")
-        df["timestamp"] = df["timestamp"] * 1000
-        df["datetime"] = pd.to_datetime(df["timestamp"], unit="ms")
-        return df
+        return [
+            OHLCV(
+                timestamp=ohlcv[0],
+                open=ohlcv[1],
+                high=ohlcv[2],
+                low=ohlcv[3],
+                close=ohlcv[4],
+                volume=ohlcv[5],
+            )
+            for ohlcv in ohlcvs
+        ]
 
     def download_ohlcv(
         self,
@@ -84,7 +100,7 @@ class MAXData(BaseFetcher):
         limit: Optional[int] = None,
         output_dir: Union[str, Path] = "data",
         skip: bool = False,
-    ) -> None:
+    ) -> pd.DataFrame:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
         csv_path = output_dir / "MAX_{}_{}.csv".format(
@@ -95,9 +111,11 @@ class MAXData(BaseFetcher):
             logger.info("{} already exists, skip", csv_path)
             return
 
-        df = self.fetch_ohlcv(symbol, timeframe, limit=limit)
+        df = parse_ohlcv(self.fetch_ohlcv(symbol, timeframe, limit=limit))
         logger.info("saving ohlcv to {}", csv_path)
         df.to_csv(csv_path, index=False)
+
+        return df
 
 
 def to_seconds(timeframe: str) -> int:
