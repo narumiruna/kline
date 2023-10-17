@@ -13,7 +13,7 @@ from .base import BaseFetcher
 
 def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
-        [ohlcv.model_dump() for ohlcv in all_ohlcv],
+        [ohlcv.dict() for ohlcv in all_ohlcv],
         columns=["timestamp", "open", "high", "low", "close", "volume"],
     )
     df = df.drop_duplicates("timestamp")
