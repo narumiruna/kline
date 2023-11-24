@@ -10,8 +10,8 @@ jobs:
     strategy:
       max-parallel: 2
       matrix:
-        python-version: [3.8, 3.9]
-        poetry-version: [1.6.1]
+        python-version: ["3.8", "3.9"]
+        poetry-version: ["1.7.1"]
 
     steps:
       - uses: actions/checkout@v4
@@ -25,9 +25,8 @@ jobs:
           python-version: ${{ matrix.python-version }}
           cache: poetry
 
+      - name: Install dependencies
+        run: poetry install
+
       - name: Test
-        env:
-          CODECOV_TOKEN: ${{secrets.CODECOV_TOKEN}}
-        run: |
-          poetry install
-          poetry run pytest -v -s tests
+        run: poetry run pytest --cov=cryptodataset tests

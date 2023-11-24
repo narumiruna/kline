@@ -12,8 +12,8 @@ jobs:
     strategy:
       max-parallel: 1
       matrix:
-        python-version: [3.8]
-        poetry-version: [1.6.1]
+        python-version: ["3.8"]
+        poetry-version: ["1.7.1"]
 
     steps:
       - uses: actions/checkout@v4
