@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cryptodata"
+name = "kline"
 version = "0.4.3"
 description = ""
 authors = ["narumi"]
@@ -21,7 +21,7 @@ black = "^23.9.1"
 pytest-cov = "^4.1.0"
 
 [tool.poetry.scripts]
-cryptodata = "cryptodata.cli:cli"
+kline = "kline.cli:cli"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

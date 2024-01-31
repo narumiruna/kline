@@ -1,7 +1,6 @@
 import pytest
-
-from cryptodata.base import OHLCV
-from cryptodata.max import MAXFetcher
+from kline.base import OHLCV
+from kline.max import MAXFetcher
 
 
 @pytest.fixture

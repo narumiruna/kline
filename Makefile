@@ -5,7 +5,7 @@ test: install
 	poetry run pytest -v -s .
 
 download:
-	poetry run cryptodata ccxt \
+	poetry run kline ccxt \
 		-e binance \
 		-s BTCUSDT \
 		-s ETHUSDT \
