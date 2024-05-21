@@ -1,14 +1,11 @@
 from pathlib import Path
-from typing import List
-from typing import Optional
-from typing import Union
+from typing import List, Optional, Union
 
 import ccxt
 import pandas as pd
 from loguru import logger
 
-from .base import OHLCV
-from .base import BaseFetcher
+from .base import OHLCV, BaseFetcher
 
 
 def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
@@ -52,6 +49,9 @@ class CCXTFetcher(BaseFetcher):
                 symbol=symbol, timeframe=timeframe, since=since
             )
             ohlcv.sort(key=lambda k: k[0])
+
+            if not ohlcv:
+                break
 
             if ohlcvs and ohlcv[0][0] == ohlcvs[0][0]:
                 break
