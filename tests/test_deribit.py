@@ -1,4 +1,5 @@
 import pytest
+
 from kline.base import OHLCV
 from kline.deribit import DeribitFetecher
 
@@ -13,5 +14,5 @@ def test_ohlcv_fetch_all_ohlcv(deribit_data: DeribitFetecher) -> None:
     timeframe = "1d"
     ohlcvs = deribit_data.fetch_ohlcv(currency, timeframe)
 
-    assert all([isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs])
+    assert all(isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs)
     assert len(ohlcvs) > 0
