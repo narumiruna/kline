@@ -15,10 +15,8 @@ pydantic = "^2.5.2"
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
 pytest = "^7.1.2"
-isort = "^5.10.1"
-flake8 = "^4.0.1"
-black = "^23.9.1"
 pytest-cov = "^4.1.0"
+ruff = "^0.4.4"
 
 [tool.poetry.scripts]
 kline = "kline.cli:cli"
@@ -26,3 +24,29 @@ kline = "kline.cli:cli"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+exclude = ["build"]
+line-length = 120
+
+[tool.ruff.lint]
+select = [
+    "B", # flake8-bugbear
+    "C", # flake8-comprehensions
+    "E", # pycodestyle errors
+    "F", # pyflakes
+    "I", # isort
+    "W", # pycodestyle warnings
+    # "UP", # pyupgrade
+]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
+
+[tool.ruff.lint.isort]
+force-single-line = true
+# https://github.com/astral-sh/ruff/issues/10519
+known-third-party = ["wandb"]
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::DeprecationWarning"]

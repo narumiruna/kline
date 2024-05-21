@@ -1,4 +1,5 @@
 import pytest
+
 from kline.base import OHLCV
 from kline.ccxt import CCXTFetcher
 
@@ -14,5 +15,5 @@ def test_ohlcv_get_ohlcv_limit(ccxt_data: CCXTFetcher) -> None:
     limit = 30
     ohlcvs = ccxt_data.fetch_ohlcv(symbol, timeframe, limit=limit)
 
-    assert all([isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs])
+    assert all(isinstance(ohlcv, OHLCV) for ohlcv in ohlcvs)
     assert len(ohlcvs) == limit

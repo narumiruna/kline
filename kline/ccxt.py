@@ -1,11 +1,14 @@
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List
+from typing import Optional
+from typing import Union
 
 import ccxt
 import pandas as pd
 from loguru import logger
 
-from .base import OHLCV, BaseFetcher
+from .base import OHLCV
+from .base import BaseFetcher
 
 
 def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
