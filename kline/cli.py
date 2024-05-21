@@ -15,9 +15,7 @@ def cli():
 
 
 @cli.command()
-@click.option(
-    "-e", "--exchange", type=click.STRING, default="binance", help="exchange name"
-)
+@click.option("-e", "--exchange", type=click.STRING, default="binance", help="exchange name")
 @click.option(
     "-s",
     "--symbol",
@@ -34,9 +32,7 @@ def cli():
     multiple=True,
     help="timeframe",
 )
-@click.option(
-    "-o", "--output-dir", type=click.STRING, default="data", help="output directory"
-)
+@click.option("-o", "--output-dir", type=click.STRING, default="data", help="output directory")
 @click.option("--all-symbols", is_flag=True, help="download all symbols")
 @click.option("--all-timeframes", is_flag=True, help="download all timeframes")
 @click.option("--skip", is_flag=True, help="skip existing files")
@@ -82,9 +78,7 @@ def ccxt(
     multiple=True,
     help="timeframe",
 )
-@click.option(
-    "-o", "--output-dir", type=click.STRING, default="data", help="output directory"
-)
+@click.option("-o", "--output-dir", type=click.STRING, default="data", help="output directory")
 @click.option("--all-symbols", is_flag=True, help="download all symbols")
 @click.option("--skip", is_flag=True, help="skip existing files")
 def max(

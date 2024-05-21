@@ -25,9 +25,7 @@ def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
     return df
 
 
-def get_klines(
-    market: str, limit: int = 10000, period: int = 1, timestamp: int = None
-) -> List[List[Number]]:
+def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> List[List[Number]]:
     url = f"{BASE_URL}/api/v2/k"
 
     params = {
@@ -48,12 +46,8 @@ class MAXFetcher(BaseFetcher):
         resp = requests.get(url)
         return [market["name"] for market in resp.json()]
 
-    def fetch_ohlcv(
-        self, symbol: str, timeframe: str, limit: int = None
-    ) -> List[OHLCV]:
-        logger.info(
-            "fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe
-        )
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> List[OHLCV]:
+        logger.info("fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe)
 
         since = None
 
@@ -103,9 +97,7 @@ class MAXFetcher(BaseFetcher):
     ) -> pd.DataFrame:
         output_dir = Path(output_dir)
         output_dir.mkdir(parents=True, exist_ok=True)
-        csv_path = output_dir / "MAX_{}_{}.csv".format(
-            symbol.replace("/", "").upper(), timeframe
-        )
+        csv_path = output_dir / "MAX_{}_{}.csv".format(symbol.replace("/", "").upper(), timeframe)
 
         if skip and csv_path.exists():
             logger.info("{} already exists, skip", csv_path)

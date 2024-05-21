@@ -63,9 +63,7 @@ class DeribitFetecher(BaseFetcher):
 
         return data["result"]["data"]
 
-    def fetch_ohlcv(
-        self, currency: str, timeframe: str = "1m", limit: Optional[int] = None
-    ) -> List[OHLCV]:
+    def fetch_ohlcv(self, currency: str, timeframe: str = "1m", limit: Optional[int] = None) -> List[OHLCV]:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data

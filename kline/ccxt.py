@@ -30,9 +30,7 @@ class CCXTFetcher(BaseFetcher):
     def get_market_symbols(self) -> List[str]:
         return [market["symbol"] for market in self.exchange.fetch_markets()]
 
-    def fetch_ohlcv(
-        self, symbol: str, timeframe: str, limit: Optional[int] = None
-    ) -> List[OHLCV]:
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: Optional[int] = None) -> List[OHLCV]:
         logger.info(
             "fetching {} ohlcv form {} with timeframe {}",
             symbol,
@@ -48,9 +46,8 @@ class CCXTFetcher(BaseFetcher):
                 ohlcvs = ohlcvs[-limit:]
                 break
 
-            ohlcv = self.exchange.fetch_ohlcv(
-                symbol=symbol, timeframe=timeframe, since=since
-            )
+            logger.info("fetch {} ohlcv with timeframe {} from {}", symbol, timeframe, pd.to_datetime(since, unit="ms"))
+            ohlcv = self.exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)
             ohlcv.sort(key=lambda k: k[0])
 
             if not ohlcv:
@@ -76,15 +73,11 @@ class CCXTFetcher(BaseFetcher):
             for ohlcv in ohlcvs
         ]
 
-    def build_path(
-        self, output_dir: Union[str, Path], symbol: str, timeframe: str
-    ) -> Path:
+    def build_path(self, output_dir: Union[str, Path], symbol: str, timeframe: str) -> Path:
         if isinstance(output_dir, str):
             output_dir = Path(output_dir)
 
-        return output_dir / "{}_{}_{}.csv".format(
-            self.exchange.name, symbol.replace("/", "").upper(), timeframe
-        )
+        return output_dir / "{}_{}_{}.csv".format(self.exchange.name, symbol.replace("/", "").upper(), timeframe)
 
     def download_ohlcv(
         self,
