@@ -9,9 +9,8 @@ python = "^3.9"
 ccxt = "^4.3.62"
 click = "^8.1.3"
 loguru = "^0.7.2"
-pandas = "^2.0.3"
+pandas = "^2.2.2"
 pydantic = "^2.8.2"
-numpy = "^1.26.4"
 
 [tool.poetry.group.dev.dependencies]
 toml = "^0.10.2"
