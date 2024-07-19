@@ -16,7 +16,7 @@ pydantic = "^2.8.2"
 toml = "^0.10.2"
 pytest = "^8.2.2"
 pytest-cov = "^5.0.0"
-ruff = "^0.5.2"
+ruff = "^0.5.3"
 
 [tool.poetry.scripts]
 kline = "kline.cli:cli"
