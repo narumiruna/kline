@@ -167,13 +167,13 @@ tests-no-zope = ["attrs[tests-mypy]", "cloudpickle", "hypothesis", "pympler", "p
 
 [[package]]
 name = "ccxt"
-version = "4.3.63"
+version = "4.3.65"
 description = "A JavaScript / TypeScript / Python / C# / PHP cryptocurrency trading library with support for 100+ exchanges"
 optional = false
 python-versions = "*"
 files = [
-    {file = "ccxt-4.3.63-py2.py3-none-any.whl", hash = "sha256:93138bbb711fcc1dc05c02ec6dbd529c47e9dbfca420f73f08ce6ed8bdc4206e"},
-    {file = "ccxt-4.3.63.tar.gz", hash = "sha256:f4d214f16e2dff5e0a92adf5fb5892fd08819d21aab79e3109b3ac3b8a8f2ac5"},
+    {file = "ccxt-4.3.65-py2.py3-none-any.whl", hash = "sha256:b47be94a59a5daba3519c7c09d813347c113e0adfb5f89fd99bfbaead910acad"},
+    {file = "ccxt-4.3.65.tar.gz", hash = "sha256:6a0103f487a8170b9e9de781da1a348dbcf603b811be253eecc1e32ea3e23d86"},
 ]
 
 [package.dependencies]
@@ -1423,4 +1423,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b4e2bc8572aebf67f782a40e55dc4d2d5c088226d6cbfd2e328f9b2e040cf774"
+content-hash = "e6a14c170ead6a2d6dc802ee93d5b22aa6a26ccd624a31803a909f5adc16171c"
