@@ -1,6 +1,5 @@
 from numbers import Number
 from pathlib import Path
-from typing import List
 from typing import Optional
 from typing import Union
 
@@ -14,7 +13,7 @@ from .base import BaseFetcher
 BASE_URL = "https://max-api.maicoin.com"
 
 
-def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
+def parse_ohlcv(ohlcvs: list[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
         [ohlcv.dict() for ohlcv in ohlcvs],
         columns=["timestamp", "open", "high", "low", "close", "volume"],
@@ -25,7 +24,7 @@ def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
     return df
 
 
-def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> List[List[Number]]:
+def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> list[list[Number]]:
     url = f"{BASE_URL}/api/v2/k"
 
     params = {
@@ -41,12 +40,12 @@ def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int 
 
 
 class MAXFetcher(BaseFetcher):
-    def get_market_symbols(self) -> List[str]:
+    def get_market_symbols(self) -> list[str]:
         url = f"{BASE_URL}/api/v2/markets"
         resp = requests.get(url)
         return [market["name"] for market in resp.json()]
 
-    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> List[OHLCV]:
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> list[OHLCV]:
         logger.info("fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe)
 
         since = None

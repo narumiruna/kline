@@ -1,11 +1,11 @@
-install:
-	poetry install
+test:
+	uv run pytest -v -s tests
 
-test: install
-	poetry run pytest -v -s .
+lint:
+	uv run ruff check --fix .
 
 download:
-	poetry run kline ccxt \
+	uv run kline ccxt \
 		-e binance \
 		-s BTCUSDT \
 		-s ETHUSDT \

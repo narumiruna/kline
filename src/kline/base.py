@@ -1,14 +1,11 @@
 from __future__ import annotations
 
-from typing import List
-from typing import Optional
-
 import pandas as pd
 from pydantic import BaseModel
 
 
 class BaseFetcher:
-    def fetch_ohlcv() -> List[OHLCV]:
+    def fetch_ohlcv() -> list[OHLCV]:
         raise NotImplementedError
 
     def download_ohlcv() -> pd.DataFrame:
@@ -21,4 +18,4 @@ class OHLCV(BaseModel):
     high: float
     low: float
     close: float
-    volume: Optional[float] = None
+    volume: float | None = None
