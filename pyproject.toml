@@ -6,7 +6,7 @@ readme = "README.md"
 authors = [
     { name = "narumi", email = "toucans-cutouts0f@icloud.com" }
 ]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 dependencies = [
     "ccxt>=4.4.33",
     "click>=8.1.7",
