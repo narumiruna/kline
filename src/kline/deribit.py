@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 from numbers import Number
-from typing import Optional
 
 import pandas as pd
 import requests
@@ -35,8 +34,8 @@ class DeribitFetecher(BaseFetcher):
         self,
         currency: str,
         timeframe: str = "1m",
-        since: Optional[int] = None,
-        until: Optional[int] = None,
+        since: int | None = None,
+        until: int | None = None,
     ) -> list[list[Number]]:
         url = f"{self.base_url}/api/v2/public/get_volatility_index_data"
 
@@ -62,7 +61,7 @@ class DeribitFetecher(BaseFetcher):
 
         return data["result"]["data"]
 
-    def fetch_ohlcv(self, currency: str, timeframe: str = "1m", limit: Optional[int] = None) -> list[OHLCV]:
+    def fetch_ohlcv(self, currency: str, timeframe: str = "1m", limit: int | None = None) -> list[OHLCV]:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data

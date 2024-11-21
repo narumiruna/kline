@@ -1,7 +1,5 @@
 from numbers import Number
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import pandas as pd
 import requests
@@ -90,8 +88,8 @@ class MAXFetcher(BaseFetcher):
         self,
         symbol: str,
         timeframe: str,
-        limit: Optional[int] = None,
-        output_dir: Union[str, Path] = "data",
+        limit: int | None = None,
+        output_dir: str | Path = "data",
         skip: bool = False,
     ) -> pd.DataFrame:
         output_dir = Path(output_dir)

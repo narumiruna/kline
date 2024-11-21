@@ -1,6 +1,4 @@
 from pathlib import Path
-from typing import Optional
-from typing import Union
 
 import ccxt
 import pandas as pd
@@ -29,7 +27,7 @@ class CCXTFetcher(BaseFetcher):
     def get_market_symbols(self) -> list[str]:
         return [market["symbol"] for market in self.exchange.fetch_markets()]
 
-    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: Optional[int] = None) -> list[OHLCV]:
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int | None = None) -> list[OHLCV]:
         logger.info(
             "fetching {} ohlcv form {} with timeframe {}",
             symbol,
@@ -72,7 +70,7 @@ class CCXTFetcher(BaseFetcher):
             for ohlcv in ohlcvs
         ]
 
-    def build_path(self, output_dir: Union[str, Path], symbol: str, timeframe: str) -> Path:
+    def build_path(self, output_dir: str | Path, symbol: str, timeframe: str) -> Path:
         if isinstance(output_dir, str):
             output_dir = Path(output_dir)
 
@@ -82,8 +80,8 @@ class CCXTFetcher(BaseFetcher):
         self,
         symbol: str,
         timeframe: str,
-        limit: Optional[int] = None,
-        output_dir: Union[str, Path] = "data",
+        limit: int | None = None,
+        output_dir: str | Path = "data",
         skip: bool = False,
     ) -> pd.DataFrame:
         output_dir = Path(output_dir)
