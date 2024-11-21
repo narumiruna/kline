@@ -1,7 +1,6 @@
 import json
 from datetime import datetime
 from numbers import Number
-from typing import List
 from typing import Optional
 
 import pandas as pd
@@ -12,7 +11,7 @@ from .base import OHLCV
 from .base import BaseFetcher
 
 
-def parse_ohlcv(ohlcvs: List[OHLCV]) -> pd.DataFrame:
+def parse_ohlcv(ohlcvs: list[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
         [ohlcv.dict() for ohlcv in ohlcvs],
         columns=["timestamp", "open", "high", "low", "close"],
@@ -38,7 +37,7 @@ class DeribitFetecher(BaseFetcher):
         timeframe: str = "1m",
         since: Optional[int] = None,
         until: Optional[int] = None,
-    ) -> List[List[Number]]:
+    ) -> list[list[Number]]:
         url = f"{self.base_url}/api/v2/public/get_volatility_index_data"
 
         since = since or 0
@@ -63,7 +62,7 @@ class DeribitFetecher(BaseFetcher):
 
         return data["result"]["data"]
 
-    def fetch_ohlcv(self, currency: str, timeframe: str = "1m", limit: Optional[int] = None) -> List[OHLCV]:
+    def fetch_ohlcv(self, currency: str, timeframe: str = "1m", limit: Optional[int] = None) -> list[OHLCV]:
         """Fetch all volatility index data from deribit
 
         https://docs.deribit.com/#public-get_volatility_index_data

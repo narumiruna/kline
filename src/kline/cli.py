@@ -1,6 +1,5 @@
 from itertools import product
 from pathlib import Path
-from typing import List
 
 import click
 from loguru import logger
@@ -38,8 +37,8 @@ def cli():
 @click.option("--skip", is_flag=True, help="skip existing files")
 def ccxt(
     exchange: str,
-    symbol: List[str],
-    timeframe: List[str],
+    symbol: list[str],
+    timeframe: list[str],
     output_dir: str,
     all_symbols: bool,
     all_timeframes: bool,
@@ -82,8 +81,8 @@ def ccxt(
 @click.option("--all-symbols", is_flag=True, help="download all symbols")
 @click.option("--skip", is_flag=True, help="skip existing files")
 def max(
-    symbol: List[str],
-    timeframe: List[str],
+    symbol: list[str],
+    timeframe: list[str],
     output_dir: str,
     all_symbols: bool,
     skip: bool,

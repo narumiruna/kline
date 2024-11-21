@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import List
 from typing import Optional
 from typing import Union
 
@@ -11,7 +10,7 @@ from .base import OHLCV
 from .base import BaseFetcher
 
 
-def parse_ohlcv(all_ohlcv: List[OHLCV]) -> pd.DataFrame:
+def parse_ohlcv(all_ohlcv: list[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
         [ohlcv.dict() for ohlcv in all_ohlcv],
         columns=["timestamp", "open", "high", "low", "close", "volume"],
@@ -27,10 +26,10 @@ class CCXTFetcher(BaseFetcher):
     def __init__(self, exchange: str) -> None:
         self.exchange = getattr(ccxt, exchange.lower())()
 
-    def get_market_symbols(self) -> List[str]:
+    def get_market_symbols(self) -> list[str]:
         return [market["symbol"] for market in self.exchange.fetch_markets()]
 
-    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: Optional[int] = None) -> List[OHLCV]:
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: Optional[int] = None) -> list[OHLCV]:
         logger.info(
             "fetching {} ohlcv form {} with timeframe {}",
             symbol,
