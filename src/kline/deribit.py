@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from numbers import Number
 
 import httpx
 import pandas as pd
