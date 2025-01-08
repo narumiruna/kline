@@ -2,8 +2,8 @@ import json
 from datetime import datetime
 from numbers import Number
 
+import httpx
 import pandas as pd
-import requests
 from loguru import logger
 
 from .base import OHLCV
@@ -12,7 +12,7 @@ from .base import BaseFetcher
 
 def parse_ohlcv(ohlcvs: list[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
-        [ohlcv.dict() for ohlcv in ohlcvs],
+        [ohlcv.model_dump() for ohlcv in ohlcvs],
         columns=["timestamp", "open", "high", "low", "close"],
     )
     df = df.drop_duplicates("timestamp")
@@ -36,7 +36,7 @@ class DeribitFetecher(BaseFetcher):
         timeframe: str = "1m",
         since: int | None = None,
         until: int | None = None,
-    ) -> list[list[Number]]:
+    ) -> list[list[int | float]]:
         url = f"{self.base_url}/api/v2/public/get_volatility_index_data"
 
         since = since or 0
@@ -51,12 +51,13 @@ class DeribitFetecher(BaseFetcher):
 
         params = {
             "currency": currency,
-            "start_timestamp": since,
-            "end_timestamp": until,
+            "start_timestamp": str(since),
+            "end_timestamp": str(until),
             "resolution": self.timeframes[timeframe],  # 1, 60, 3600, 43200 or 1D
         }
 
-        resp = requests.get(url, params=params)
+        resp = httpx.get(url, params=params)
+        resp.raise_for_status()
         data = json.loads(resp.text)
 
         return data["result"]["data"]
@@ -69,13 +70,13 @@ class DeribitFetecher(BaseFetcher):
 
         until = int(datetime.now().timestamp() * 1000)
 
-        ohlcvs = []
+        ohlcvs: list[list[int | float]] = []
         while True:
             if limit is not None and len(ohlcvs) >= limit:
                 ohlcvs = ohlcvs[-limit:]
                 break
 
-            new_data = self._fetch(currency, timeframe, since=0, until=until)
+            new_data: list[list[int | float]] = self._fetch(currency, timeframe, since=0, until=until)
 
             # break the loop if there is no new data
             if not new_data:
@@ -85,11 +86,11 @@ class DeribitFetecher(BaseFetcher):
                 break
 
             ohlcvs = new_data + ohlcvs
-            until = ohlcvs[0][0] - 1
+            until = int(ohlcvs[0][0]) - 1
 
         return [
             OHLCV(
-                timestamp=ohlcv[0],
+                timestamp=int(ohlcv[0]),
                 open=ohlcv[1],
                 high=ohlcv[2],
                 low=ohlcv[3],

@@ -1,8 +1,8 @@
-from numbers import Number
 from pathlib import Path
+from typing import Any
 
+import httpx
 import pandas as pd
-import requests
 from loguru import logger
 
 from .base import OHLCV
@@ -22,44 +22,44 @@ def parse_ohlcv(ohlcvs: list[OHLCV]) -> pd.DataFrame:
     return df
 
 
-def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int = None) -> list[list[Number]]:
+def get_klines(market: str, limit: int = 10000, period: int = 1, timestamp: int | None = None) -> Any:
     url = f"{BASE_URL}/api/v2/k"
 
     params = {
         "market": market.replace("/", "").lower(),
-        "limit": limit,
-        "period": period,
+        "limit": str(limit),
+        "period": str(period),
     }
     if timestamp is not None:
-        params["timestamp"] = timestamp
+        params["timestamp"] = str(timestamp)
 
-    resp = requests.get(url, params=params)
+    resp = httpx.get(url, params=params)
+    resp.raise_for_status()
     return resp.json()
 
 
 class MAXFetcher(BaseFetcher):
-    def get_market_symbols(self) -> list[str]:
+    def get_market_symbols(self) -> list[Any]:
         url = f"{BASE_URL}/api/v2/markets"
-        resp = requests.get(url)
+        resp = httpx.get(url)
+        resp.raise_for_status()
         return [market["name"] for market in resp.json()]
 
-    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int = None) -> list[OHLCV]:
+    def fetch_ohlcv(self, symbol: str, timeframe: str, limit: int | None = None) -> list[OHLCV]:
         logger.info("fetching {} ohlcv form MaiCoin MAX with timeframe {}", symbol, timeframe)
 
         since = None
 
-        ohlcvs = []
+        ohlcvs: list[list[int | float]] = []
         while True:
             if limit is not None and len(ohlcvs) >= limit:
                 ohlcvs = ohlcvs[-limit:]
                 break
 
-            logger.info(
-                "fetch {} ohlcv with timeframe {} from {}",
-                symbol,
-                timeframe,
-                pd.to_datetime(since, unit="s"),
-            )
+            if since is not None:
+                logger.info(
+                    "fetch {} ohlcv with timeframe {} from {}", symbol, timeframe, pd.to_datetime(since, unit="s")
+                )
             ohlcv = get_klines(symbol, period=to_minutes(timeframe), timestamp=since)
 
             ohlcv.sort(key=lambda k: k[0])
@@ -74,7 +74,7 @@ class MAXFetcher(BaseFetcher):
 
         return [
             OHLCV(
-                timestamp=ohlcv[0],
+                timestamp=int(ohlcv[0]),
                 open=ohlcv[1],
                 high=ohlcv[2],
                 low=ohlcv[3],
@@ -98,7 +98,9 @@ class MAXFetcher(BaseFetcher):
 
         if skip and csv_path.exists():
             logger.info("{} already exists, skip", csv_path)
-            return
+            df = pd.read_csv(csv_path)
+            df["datetime"] = pd.to_datetime(df["timestamp"], unit="s")
+            return df
 
         df = parse_ohlcv(self.fetch_ohlcv(symbol, timeframe, limit=limit))
         logger.info("saving ohlcv to {}", csv_path)

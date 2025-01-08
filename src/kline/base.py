@@ -5,10 +5,10 @@ from pydantic import BaseModel
 
 
 class BaseFetcher:
-    def fetch_ohlcv() -> list[OHLCV]:
+    def fetch_ohlcv(self, *args, **kwargs) -> list[OHLCV]:
         raise NotImplementedError
 
-    def download_ohlcv() -> pd.DataFrame:
+    def download_ohlcv(self, *args, **kwargs) -> pd.DataFrame:
         raise NotImplementedError
 
 
