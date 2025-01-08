@@ -77,18 +77,18 @@ def ccxt(
     multiple=True,
     help="timeframe",
 )
-@click.option("-o", "--output-dir", type=click.STRING, default="data", help="output directory")
+@click.option(
+    "-o", "--output-dir", type=click.Path(exists=False, path_type=Path), default="data", help="output directory"
+)
 @click.option("--all-symbols", is_flag=True, help="download all symbols")
 @click.option("--skip", is_flag=True, help="skip existing files")
 def max(
     symbol: list[str],
     timeframe: list[str],
-    output_dir: str,
+    output_dir: Path,
     all_symbols: bool,
     skip: bool,
 ) -> None:
-    output_dir = Path(output_dir)
-
     max_data = MAXFetcher()
 
     if all_symbols:

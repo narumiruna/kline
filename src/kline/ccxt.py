@@ -10,7 +10,7 @@ from .base import BaseFetcher
 
 def parse_ohlcv(all_ohlcv: list[OHLCV]) -> pd.DataFrame:
     df = pd.DataFrame(
-        [ohlcv.dict() for ohlcv in all_ohlcv],
+        [ohlcv.model_dump() for ohlcv in all_ohlcv],
         columns=["timestamp", "open", "high", "low", "close", "volume"],
     )
     df = df.drop_duplicates("timestamp")
@@ -37,14 +37,18 @@ class CCXTFetcher(BaseFetcher):
 
         since = None
 
-        ohlcvs = []
+        ohlcvs: list[list[int | float]] = []
         while True:
             if limit is not None and len(ohlcvs) >= limit:
                 ohlcvs = ohlcvs[-limit:]
                 break
 
-            logger.info("fetch {} ohlcv with timeframe {} from {}", symbol, timeframe, pd.to_datetime(since, unit="ms"))
-            ohlcv = self.exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)
+            if since is not None:
+                logger.info(
+                    "fetch {} ohlcv with timeframe {} from {}", symbol, timeframe, pd.to_datetime(since, unit="ms")
+                )
+
+            ohlcv: list[list[int | float]] = self.exchange.fetch_ohlcv(symbol=symbol, timeframe=timeframe, since=since)
             ohlcv.sort(key=lambda k: k[0])
 
             if not ohlcv:
@@ -60,7 +64,7 @@ class CCXTFetcher(BaseFetcher):
 
         return [
             OHLCV(
-                timestamp=ohlcv[0],
+                timestamp=int(ohlcv[0]),
                 open=ohlcv[1],
                 high=ohlcv[2],
                 low=ohlcv[3],
