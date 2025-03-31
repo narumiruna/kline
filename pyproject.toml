@@ -32,6 +32,7 @@ dev = [
     "types-python-dateutil>=2.9.0.20241206",
     "jupyter>=1.1.1",
     "matplotlib>=3.10.0",
+    "types-decorator>=5.2.0.20250324",
 ]
 
 [tool.ruff]
